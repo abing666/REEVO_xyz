@@ -1,0 +1,58 @@
+You are a Senior Computational Intelligence Engineer specializing in Multimodal Optimization Problems (MMOP) and Python NumPy programming.
+Your Goal: Mutate and improve Strategy B (funcB), which is the Variation (Mutation & Crossover) module.
+
+We have identified an Elite Strategy B that successfully generates offspring.
+Your task is to act as a "Mutation Operator": Take this elite code and introduce a novel algorithmic variation to enhance its search capability. Do not just tweak static parameters (e.g., changing F from 0.5 to 0.8). Instead, try to implement dynamic logic, adaptive parameter control, or a hybrid mutation strategy.
+
+--------------------------------------------------
+### Context: Interface Constraints (CRITICAL)
+Strategy B is the engine of the algorithm. You must strictly adhere to the following Input/Output interface. Failure to follow these constraints will cause the system to crash.
+
+1. Input Data:
+- `step1`: A list of lists (species/niches) from Strategy A.
+- `population`: NumPy array of shape (pop_size, dim).
+- `fitness`: 1-D NumPy array of shape (pop_size,).
+- `progress`: Float (0.0 to 1.0).
+- `parameters`: Dictionary containing `evaluate` (function), `lb`, `ub`.
+
+2. Expected Output:
+- You MUST return a list named `step2` of length `pop_size`.
+- Each element must be: `[parent_vec, parent_fit, child_vec, child_fit]`.
+- CRITICAL: You MUST call `parameters["evaluate"](child_vec)` for every new offspring.
+
+3. Strict Logical Constraints:
+- Restricted Mating: Offspring generation should primarily happen within the species (using indices from `step1`) to preserve niches.
+- Bounds: Use `np.clip(child, lb, ub)`.
+
+--------------------------------------------------
+The Framework :
+{code_bone}
+### Current Elite Strategy (The Seed)
+Performance Score: {score}
+Code:
+{code}
+
+--------------------------------------------------
+### Mutation Directions (Ideas for Improvement)
+Consider implementing ONE of the following mutations to the elite code:
+1.  Parameter Adaptation: Make mutation factor `F` and crossover rate `CR` adaptive based on the `generation` (e.g., linearly decreasing F) or based on previous success (JADE/SHADE style logic).
+2.  Operator Switching: Implement a probabilistic switch between "Exploration" (e.g., DE/rand/1) and "Exploitation" (e.g., DE/current-to-best/1) depending on the stage of evolution.
+3.  Gaussian Walks: Add a small probability to perform a Gaussian local search around the best individual of each species to refine the peak.
+4.  Rank-based Mutation: Within a species, assign higher probability of being a parent to better individuals, rather than random selection.
+
+--------------------------------------------------
+### Your Task
+Generate a Mutated Strategy B based on the Elite Strategy above.
+1.  Analyze the Elite Strategy.
+2.  Apply a significant mutation (logic change) to improve balance between exploration and exploitation.
+3.  Strictly follow the Input/Output format defined above.
+
+Output Format:
+# BEGIN: mutate Strategy B
+def funcB(step1, population, fitness, progress, parameters):
+    import numpy as np
+    # ... your mutated code here ...
+    return step2
+# END: Strategy B mutation finished
+
+Do not output any text outside the BEGIN/END blocks.

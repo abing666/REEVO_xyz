@@ -1,0 +1,65 @@
+You are a Senior Computational Intelligence Engineer specializing in Multimodal Optimization Problems (MMOP) and Python NumPy programming.
+Your Goal: Optimize Strategy A (funcA), which is the Population Structure Analysis & Niching module of a Niching Differential Evolution algorithm.
+
+The algorithm aims to locate and maintain multiple global optima simultaneously. Strategy A is the "brain" that organizes the population into distinct species (niches) so that Strategy B (Variation) and Strategy C (Selection) can operate locally within these niches.
+
+--------------------------------------------------
+### Context: Interface Constraints (CRITICAL)
+Strategy A works within a fixed framework. You must strictly adhere to the following Input/Output interface. Failure to follow these constraints will cause the downstream strategies (B and C) to crash.
+
+1. Input Data:
+- `population`: A NumPy array of shape (pop_size, dim) containing current solutions.
+- `fitness`: A 1-D NumPy array of shape (pop_size,) containing scalar fitness values.
+- `progress`: A float value (0.0 to 1.0) representing the current progress (fe_count / max_fe).
+- `parameters`: A dictionary containing `pop_size`, `dim`, `lb` (lower bounds), `ub` (upper bounds), and `evaluate` (function).
+
+2. Expected Output:
+- You MUST return a `species_list`.
+- Format: A list of lists of integers. Each sub-list represents a species and contains the indices of the individuals belonging to that species.
+- Example: `[[0, 2, 5], [1, 3], [4]]` for a population of size 6.
+
+3. Strict Logical Constraints:
+- Completeness: Every index from `0` to `pop_size - 1` MUST appear in the output exactly once. No missing indices, no duplicate indices.
+- Independence: Species should represent clusters in the search space (e.g., based on Euclidean distance or topology).
+- Type Safety: Do NOT use PyTorch or TensorFlow. Use only `numpy` (imported as `np`).
+
+--------------------------------------------------
+The Framework :
+{code_bone}
+
+### Parents for Crossover
+We have two variants of Strategy A from previous experiments.
+
+Parent 1 (Better Performance):
+Score: {score_better}
+Code:
+{code_better}
+
+Parent 2 (Worse Performance):
+Score: {score_worse}
+Code:
+{code_worse}
+
+--------------------------------------------------
+### Analysis & Reflection
+Analysis of why Parent 2 performed worse compared to Parent 1, and potential areas for improvement.Analysis is allowed only in the form of Python comments (#) inside the modified strategy functions.
+Any non-comment text outside code blocks is forbidden.
+
+--------------------------------------------------
+### Your Task
+Generate a NEW Strategy A (funcA) by performing a "crossover" and improvement on the two parents above.
+
+1. Inherit the successful clustering/niching mechanisms from Parent 1.
+2. Integrate novel ideas from Parent 2 (e.g., dynamic radius, different distance metrics, or topology analysis) if they are promising, but fix their implementation flaws.
+3. Refine the logic to better separate peaks. If the species are too large, the algorithm acts like a global optimizer (finding only one peak). If they are too small, it wastes evaluations.
+4. Strictly follow the Input/Output format defined above.
+
+Output Format:
+# BEGIN: modify Strategy A
+def funcA(population, fitness, generation, parameters):
+    import numpy as np
+    # ... your optimized code here ...
+    return species_list
+# END: Strategy A modification finished
+
+Do not output any text outside the BEGIN/END blocks.

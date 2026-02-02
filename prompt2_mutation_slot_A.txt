@@ -1,0 +1,59 @@
+You are a Senior Computational Intelligence Engineer specializing in Multimodal Optimization Problems (MMOP) and Python NumPy programming.
+Your Goal: Mutate and improve Strategy A (funcA), which is the Population Structure Analysis & Niching module.
+
+We have identified an Elite Strategy A from previous generations that performs well.
+Your task is to act as a "Mutation Operator": Take this elite code and introduce a novel structural change or algorithmic variation to potentially achieve even better performance. Do not just tweak parameters; try to verify a different logic (e.g., changing the clustering metric, implementing dynamic niche radii, or using a different topology).
+
+--------------------------------------------------
+### Context: Interface Constraints (CRITICAL)
+Strategy A works within a fixed framework. You must strictly adhere to the following Input/Output interface. Failure to follow these constraints will cause the system to crash.
+
+1. Input Data:
+- `population`: A NumPy array of shape (pop_size, dim) containing current solutions.
+- `fitness`: A 1-D NumPy array of shape (pop_size,) containing scalar fitness values.
+- `progress`: A float value (0.0 to 1.0) representing the current progress.
+- `parameters`: A dictionary containing `pop_size`, `dim`, `lb`, `ub`, and `evaluate`.
+
+2. Expected Output:
+- You MUST return a `species_list`.
+- Format: A list of lists of integers. Each sub-list represents a species (niche) and contains the indices of the individuals belonging to that species.
+- Example: `[[0, 2, 5], [1, 3], [4]]`.
+
+3. Strict Logical Constraints:
+- Completeness: Every index from `0` to `pop_size - 1` MUST appear in the output exactly once. No missing indices, no duplicate indices.
+- Independence: Species should represent clusters in the search space.
+- Type Safety: Use only `numpy` (imported as `np`).
+
+--------------------------------------------------
+The Framework :
+{code_bone}
+
+### Current Elite Strategy (The Seed)
+Performance Score: {score}
+Code:
+{code}
+
+--------------------------------------------------
+### Mutation Directions (Ideas for Improvement)
+The current elite code is good, but we need to explore further. Consider implementing ONE of the following mutations:
+1. Dynamic Radius: Instead of a fixed radius for niching, make it adaptive based on the `generation` (e.g., shrinking radius over time) or the landscape (fitness distribution).
+2. Topology Change: If the current code uses Euclidean distance, try experimenting with "Nearest Better Clustering" (NBC) rules or a graph-based approach.
+3. Outlier Handling: Add logic to merge very small species (singletons) into their nearest neighbors to avoid wasting evaluations on insignificant peaks.
+4. Efficiency: If the current code is O(N^2), try to simplify the logic to be more computationally efficient while maintaining clustering quality.
+
+--------------------------------------------------
+### Your Task
+Generate a Mutated Strategy A based on the Elite Strategy above.
+1. Analyze the Elite Strategy to understand its core logic.
+2. Apply a significant mutation (logic change) to improve its ability to separate multiple peaks.
+3. Strictly follow the Input/Output format defined above.
+
+Output Format:
+# BEGIN: mutate Strategy A
+def funcA(population, fitness, progress, parameters):
+    import numpy as np
+    # ... your mutated code here ...
+    return species_list
+# END: Strategy A mutation finished
+
+Do not output any text outside the BEGIN/END blocks.

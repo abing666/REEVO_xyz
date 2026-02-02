@@ -1,0 +1,82 @@
+You are a Senior Computational Intelligence Engineer specializing in Multimodal Optimization Problems (MMOP) and Python NumPy programming.
+Your Goal:
+Implement three core functions (funcA, funcB, funcC) for a Niching Differential Evolution algorithm within a provided framework. The goal is to locate and maintain multiple global optima.
+
+The Framework :
+{code_bone}
+
+Constraints & Rules (CRITICAL):
+
+No Explanations: Output ONLY valid Python code inside the requested blocks.
+Type Safety: Use NumPy for all mathematical operations. Do NOT use Python lists for vector calculations.
+
+Shape Consistency:
+population is strictly (pop_size, dim).
+fitness is strictly (pop_size,).
+Ensure broadcasting matches. When subtracting vectors, ensure shapes align.
+Bounds Handling: Always clip offspring to [lb, ub].
+Algorithm Selection: Do not "try" random ideas. Implement the "Crowding DE" (Crowding Differential Evolution) strategy with an external archive for peaks.
+
+Strategy Specifications
+
+1. Strategy A: funcA (Static Grouping / Indexing)
+Strategy A: funcA (Population Structure & Explicit Niching)
+Logic: The algorithm relies on **explicitly dividing the population into multiple independent species** based on spatial or fitness proximity. This is critical to maintain diversity and locate multiple peaks simultaneously.
+The task of this strategy is to perform Clustering or Niching to partition the population.
+Inspiration: Use Nearest Better Clustering (NBC), K-Means, or Clearing methods.
+Goal: The strategy MUST identify distinct niches. Do NOT treat the population as a single unit.
+Idea to explore: Construct a "Nearest Better Neighbor" tree or use Euclidean distance thresholds to cut edges and form sub-populations.
+Note: This strategy must return a list of species, where each species is a list of indices.
+Constraint: Ensure every index from 0 to pop_size-1 is present exactly once (every individual belongs to one species).
+
+2. Strategy B: funcB (Differential Evolution Mutation & Crossover)
+This strategy generates new offspring by applying a variation operator within each species. The goal is to explore the solution space effectively while maintaining diversity and ensuring that the best solutions are preserved.
+Inspiration: You can use Differential Evolution (DE) or Particle Swarm Optimization (PSO) style variation strategies.
+Goal: Ensure the offspring are diverse, and balance exploration (finding new optima) with exploitation (refining existing good solutions).
+Idea to explore: Consider applying differential mutation with parameters like F1, F2, or using random perturbation to generate diverse offspring.
+Note: Make sure this strategy accounts for the species sizes and fitness distribution.
+Input: - The input `species_list` is a list of lists (e.g., `[[0, 2, 5], [1, 3], [4]]`).You MUST iterate through each sub-list in `species_list` separately.
+Output: A list step2 of length pop_size. Each element is [parent_vector, parent_fitness, offspring_vector, offspring_fitness].
+
+3. Strategy C: funcC (Deterministic Crowding Selection & Archiving)
+Selection: For each index i, compare offspring vs parent. If f(offspring) < f(parent) (assuming minimization) or f(offspring) > f(parent) (maximization), the offspring replaces the parent. Wait, check fitness direction! Assume Maximization based on "Peak Ratio".
+Archiving (Elite Preservation): Identify the best individuals in the current population.
+Calculate Euclidean distances between potential elites and existing elite_population.
+Only add a high-fitness solution to elite_population if it is at least threshold distance away from all current elites (to avoid duplicate peaks).
+Return: Updated elite_population, elite_fitness, population, fitness.
+
+Output Format:
+
+# BEGIN: generate Strategy A
+def funcA(population, fitness, progress, parameters):
+    import numpy as np
+    pop_size = parameters["pop_size"]
+    # Implementation of Clustering / Niching (e.g., NBC or K-Means)
+    # ...
+    # Return format: List of lists, where each sub-list represents a species
+    # Example structure: [[0, 2, 5], [1, 3], [4]] 
+    return species_list 
+# END: generate A modification finished
+
+# BEGIN: generate Strategy B
+def funcB(step1, population, fitness, progress, parameters):
+    import numpy as np
+    # Extract parameters
+    dim = parameters["dim"]
+    lb = parameters["lb"]
+    ub = parameters["ub"]
+    evaluate = parameters["evaluate"]
+    
+    # Implementation of DE operations
+    # Ensure strict shape handling
+    
+    return step2_list # List of [parent, p_fit, off, off_fit]
+# END: generate B modification finished
+
+# BEGIN: generate Strategy C
+def funcC(step2, elite_population, elite_fitness, progress, parameters):
+    import numpy as np
+    # Implementation of Selection and Archiving
+    # Strict shape checks for elite_population
+    return elite_population, elite_fitness, new_population, new_fitness
+# END: generate C modification finished

@@ -1,0 +1,111 @@
+import numpy as np
+
+def optimizer(problem):
+   # === Extract problem-level parameters ===
+    dim = int(problem.dim)              # Dimension of the decision vector
+    bounds = problem.bounds             # NumPy array with shape (2, dim):
+                                        # bounds[0] -> per-dimension lower bounds
+                                        # bounds[1] -> per-dimension upper bounds
+    lb = bounds[0]                      # Lower bound vector, shape (dim,)
+    ub = bounds[1]                      # Upper bound vector, shape (dim,)
+
+    max_fe = problem.max_fe             # Maximum number of fitness evaluations
+    evaluate = problem.evaluate         # Black-box fitness function: f(x) -> scalar
+    pop_size = problem.pop_size         # Fixed population size
+
+
+
+    # Pack frequently used parameters into a dictionary
+    parameters = {
+        "dim": dim,
+        "lb": lb,
+        "ub": ub,
+        "pop_size": pop_size,
+        "evaluate": evaluate # Global evaluation budget
+    }
+    
+    # === Initialize population uniformly within bounds ===
+    # population: NumPy array with shape (pop_size, dim), dtype=float
+    # Each row represents one candidate solution in the continuous search space
+    population = lb + (ub - lb) * np.random.rand(pop_size, dim)
+
+    # === Evaluate initial population ===
+    # fitness: 1-D NumPy array with shape (pop_size,), dtype=float
+    # Each element is a scalar fitness value corresponding to one solution
+    fitness = np.array([evaluate(x) for x in population]).flatten()
+    if fitness.ndim > 1:
+        fitness = fitness.flatten()
+
+
+    # === Initialize evaluation counter and progress indicator ===
+    fe_count = pop_size
+    progress = fe_count / max_fe   # Normalized progress in [0, 1]
+    
+    # elite_population: NumPy array or list with shape (k, dim), dtype=float
+    # k is not fixed and may differ from population size
+    # Each row represents a candidate solution selected after environmental selection
+    elite_population = []
+
+    # elite_fitness: 1-D NumPy array with shape (k,), dtype=float
+    # k is not fixed and may differ from population size
+    # Each element is a scalar fitness value corresponding to one solution
+    elite_fitness = []
+    
+    # === Main evolutionary loop ===
+    while fe_count < max_fe:
+        
+        # Strategy A:
+        # Analyze population structure and perform niching / clustering
+        # Output is a list of species (each species is a list of indices)
+        step1 = lookUp(population, fitness, progress, parameters)
+        
+        # Strategy B:
+        # Generate offspring based on species structure and DE-style operators
+        # Each element of step2: [parent, parent_fitness, offspring, offspring_fitness]
+        step2 = generateNew(step1, population, fitness, progress, parameters)
+        fe_count += len(step2)
+        
+        # Strategy C:
+        # Environmental selection between parent and offspring
+        # Output:
+        #   elite_population : NumPy array or list with shape (k, dim), dtype=float
+        #   elite_fitness: 1-D NumPy array with shape (k,), dtype=float
+        #   k is not fixed and may differ from population size
+        #   population : NumPy array or list with shape (pop_size, dim), dtype=float
+        #   fitness : 1-D iterable of scalar fitness values, length n
+        step3 = updatePopulation(step2, elite_population, elite_fitness, progress,parameters)
+        
+        # Unpack results and normalize data structures
+        elite_population, elite_fitness, population, fitness = step3
+
+        fitness = np.array([np.array(x).flatten()[0] for x in fitness])
+        elite_fitness = np.array([np.array(x).flatten()[0] for x in elite_fitness])
+
+        # Update normalized progress progress
+        progress = fe_count / max_fe 
+    # Return final population (elite concatenated with population for safety)
+    elite_population = np.array(elite_population)
+    return np.vstack((elite_population, population))
+
+def lookUp(population, fitness, progress, parameters):
+    # Wrapper for population structure analysis
+    return funcA(population, fitness, progress, parameters)
+    
+
+def generateNew(step1, population, fitness, progress, parameters):
+    # Wrapper for offspring generation strategy
+    return funcB(step1, population, fitness, progress, parameters)
+    
+    
+def updatePopulation(step2, elite_population, elite_fitness, progress,parameters):
+    # Wrapper for environmental selection
+    return funcC(step2, elite_population, elite_fitness, progress,parameters)
+
+# --- Strategy A Slot ---
+$slotA
+
+# --- Strategy B Slot ---
+$slotB
+
+# --- Strategy C Slot ---
+$slotC
