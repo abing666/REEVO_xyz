@@ -1,7 +1,5 @@
 # REEVO_xyz
 
-# ReEvo: 基于多槽位策略池的代码进化优化框架技术说明
-
 ## 1. 初始化阶段
 * **提示词**：启动 10 份相同的初始化请求，提示词为 `prompt0_init_generation.txt` 和代码框架 `code_bone.txt`。
 * **快速验证**：
